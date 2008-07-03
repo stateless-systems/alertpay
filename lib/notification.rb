@@ -32,6 +32,11 @@ module Alertpay
       status == 'Success'
     end
 
+    # Was this a subscription payment?
+    def is_subscription_payment?
+      status == 'Subscription-Payment-Success'
+    end
+
     # The shipping charges for this transaction.
     def shipping
       params['ap_shippingcharges'].to_f
