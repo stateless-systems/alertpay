@@ -1,52 +1,52 @@
-# -*- ruby -*-
+require 'rubygems'
 require 'rake'
-require 'rake/clean'
-require 'rake/gempackagetask'
-require 'rake/testtask'
 
-NAME = 'alertpay'
-VERS = '0.2'
-
-CLEAN.include ['**/*.log', '*.gem']
-CLOBBER.include ['**/*.log']
-
-spec = Gem::Specification.new do |s|
-  s.name             = NAME
-  s.version          = VERS
-  s.platform         = Gem::Platform::RUBY
-  s.has_rdoc         = true
-  s.extra_rdoc_files = ['README.txt']
-  s.summary          = 'Common interface to alertpay request params.'
-  s.description      = s.summary
-  s.author           = 'Danial Pearce'
-  s.email            = 'danial@statelesssystems.com'
-  s.homepage         = 'http://statelesssystems.com'
-
-  s.files            = FileList["{lib,test}/**/*"].to_a + %w(README.txt)
-  s.test_files       = Dir['test/**/*_test.rb']
+begin
+  require 'jeweler'
+  Jeweler::Tasks.new do |gem|
+    gem.name = "alertpay"
+    gem.summary = %Q{Common interface to alertpay request params.}
+    gem.email = "enquiries@statelesssystems.com"
+    gem.homepage = "http://github.com/stateless-systems/alertpay"
+    gem.authors = ["Stateless Systems"]
+  end
+rescue LoadError
+  puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
 end
 
-desc 'Default: Run unit tests.'
+require 'rake/testtask'
+Rake::TestTask.new(:test) do |test|
+  test.libs << 'lib' << 'test'
+  test.pattern = 'test/**/*_test.rb'
+  test.verbose = true
+end
+
+begin
+  require 'rcov/rcovtask'
+  Rcov::RcovTask.new do |test|
+    test.libs << 'test'
+    test.pattern = 'test/**/*_test.rb'
+    test.verbose = true
+  end
+rescue LoadError
+  task :rcov do
+    abort "RCov is not available. In order to run rcov, you must: sudo gem install spicycode-rcov"
+  end
+end
+
 task :default => :test
 
-Rake::GemPackageTask.new(spec) do |p|
-    p.need_tar = true
-    p.gem_spec = spec
-end
+require 'rake/rdoctask'
+Rake::RDocTask.new do |rdoc|
+  if File.exist?('VERSION.yml')
+    config = YAML.load(File.read('VERSION.yml'))
+    version = "#{config[:major]}.#{config[:minor]}.#{config[:patch]}"
+  else
+    version = ""
+  end
 
-desc 'Run the unit tests.'
-Rake::TestTask.new do |t|
-  t.pattern = 'test/**/*_test.rb'
-  t.verbose = true
-end
-
-desc 'Package and install as gem.'
-task :install do
-  sh %{rake package}
-  sh %{sudo gem install pkg/#{NAME}-#{VERS}}
-end
-
-desc 'Uninstall the gem.'
-task :uninstall => [:clean] do
-  sh %{sudo gem uninstall #{NAME}}
+  rdoc.rdoc_dir = 'rdoc'
+  rdoc.title = "alertpay #{version}"
+  rdoc.rdoc_files.include('README*')
+  rdoc.rdoc_files.include('lib/**/*.rb')
 end
