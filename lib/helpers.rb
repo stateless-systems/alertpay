@@ -8,9 +8,10 @@ module Alertpay
       end
     end
 
-    def alertpay_setup(amount, item_id, merchant, options = {})
+    def alertpay_setup(amount, currency, item_id, merchant, options = {})
       params = {
         :ap_amount       => amount,
+        :ap_currency     => (currency || :usd).to_s.upcase,
         :ap_merchant     => merchant,
         :ap_itemcode     => item_id,
         :ap_quantity     => 1
