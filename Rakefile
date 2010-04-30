@@ -4,7 +4,7 @@ require 'rake'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name = "alertpay"
+    gem.name = "stateless-systems-alertpay"
     gem.summary = %Q{Common interface to alertpay request params.}
     gem.email = "enquiries@statelesssystems.com"
     gem.homepage = "http://github.com/stateless-systems/alertpay"
